@@ -5,10 +5,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Entity
+@Entity(name = "customer")
 public class CustomerEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer id;
     public String idCard;
     public String name;

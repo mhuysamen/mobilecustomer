@@ -9,7 +9,7 @@ import com.mhuysamen.mobilecustomer.domain.MobileSubscriberSearchCriteria;
 import com.mhuysamen.mobilecustomer.domain.PhoneNumber;
 
 public interface MobileSubscriberDataSource {
-    List<MobileSubscriber> fetchAllSubscribers(MobileSubscriberIdentifier start, Integer count);
+    List<MobileSubscriber> fetchAllSubscribers();
 
     List<MobileSubscriber> findMatchingSubscribers(MobileSubscriberSearchCriteria search_criteria);
 
@@ -20,4 +20,6 @@ public interface MobileSubscriberDataSource {
     Optional<MobileSubscriber> fetchMobileSubscriberById(MobileSubscriberIdentifier mobileSubscriberId);
 
     void updateMobileSubscriber(MobileSubscriber subscriber);
+
+    void removeMobileSubscriber(MobileSubscriberIdentifier mobileSubscriberId);
 }

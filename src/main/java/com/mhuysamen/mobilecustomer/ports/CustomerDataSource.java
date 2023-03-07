@@ -15,5 +15,5 @@ public interface CustomerDataSource {
 
     public void updateCustomer(Customer customer);
 
-    public void removeCustomer(Customer customer);
+    public void removeCustomer(CustomerIdentifier customer_id);
 }

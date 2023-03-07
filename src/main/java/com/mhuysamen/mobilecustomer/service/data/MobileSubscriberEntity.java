@@ -7,10 +7,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Entity
+@Entity(name = "mobilesubscriber")
 public class MobileSubscriberEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer id;
     public String msisdn;
     public Integer customerIdOwner;

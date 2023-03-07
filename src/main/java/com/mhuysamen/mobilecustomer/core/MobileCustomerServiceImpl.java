@@ -63,26 +63,32 @@ public class MobileCustomerServiceImpl implements MobileCustomerService {
 
     @Override
     public List<MobileSubscriber> listAllMobileSubscribers() {
-        // TODO Auto-generated method stub
-        return null;
+        
+        return mobileSubscriberData.fetchAllSubscribers();
     }
 
     @Override
     public List<MobileSubscriber> listMatchingSubscribers(MobileSubscriberSearchCriteria criteria) {
-        // TODO Auto-generated method stub
-        return null;
+        return mobileSubscriberData.findMatchingSubscribers(criteria);
     }
 
     @Override
     public void removeCustomer(CustomerIdentifier customerId) {
-        // TODO Auto-generated method stub
-        
+        Optional<Customer> customer = customerData.fetchCustomerById(customerId);
+        if(!customer.isPresent()) {
+            throw new CustomerNotFoundException(customerId);
+        }
+
+        customerData.removeCustomer(customerId);
     }
 
     @Override
     public void removeMobileSubscriber(MobileSubscriberIdentifier subscriberId) {
-        // TODO Auto-generated method stub
-        
+        Optional<MobileSubscriber> subscriber = mobileSubscriberData.fetchMobileSubscriberById(subscriberId);
+        if(!subscriber.isPresent()) {
+            throw new MobileSubscriberNotFoundException(subscriberId);
+        }
+        mobileSubscriberData.removeMobileSubscriber(subscriberId);
     }
 
     @Override
@@ -142,7 +148,6 @@ public class MobileCustomerServiceImpl implements MobileCustomerService {
         subscriber.setUser(newUser);
 
         mobileSubscriberData.updateMobileSubscriber(subscriber);
-        
     }
 
 }
