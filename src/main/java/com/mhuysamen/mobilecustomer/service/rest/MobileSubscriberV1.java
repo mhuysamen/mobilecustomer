@@ -13,19 +13,22 @@ import com.mhuysamen.mobilecustomer.domain.MobileSubscriberIdentifier;
 import com.mhuysamen.mobilecustomer.domain.PhoneNumber;
 import com.mhuysamen.mobilecustomer.domain.MobileSubscriber.ServiceType;
 
+import lombok.Data;
+
 @JsonNaming(SnakeCaseStrategy.class)
+@Data
 public class MobileSubscriberV1 {
-    public Integer id;
-    @NotEmpty
-    public String msisdn;
-    @NotEmpty
-    public Integer owner;
-    @NotEmpty
-    public Integer user;
-    @NotEmpty
-    public ServiceType serviceType;
-    @NotEmpty
-    public Instant serviceStartDate;
+    private Integer id;
+    @NotEmpty(message = "phone number is required")
+    private String msisdn;
+    @NotEmpty(message = "owner identifier must be provided")
+    private Integer owner;
+    @NotEmpty(message = "user identifier must be provided")
+    private Integer user;
+    @NotEmpty(message = "service_type must be specified")
+    private ServiceType serviceType;
+    @NotEmpty(message = "service_start_date must be specified")
+    private Instant serviceStartDate = Instant.now();
 
     @JsonIgnore
     final public static String MEDIA_TYPE_JSON = "application/vnd.mhuysamen.com.mobilesubscriber.v1+json";

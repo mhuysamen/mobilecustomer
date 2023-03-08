@@ -36,4 +36,8 @@ public class PhoneNumber {
             throw new InvalidPhoneNumber(value);
         }
     }
+
+    public String toString() {
+        return value;
+    }
 }

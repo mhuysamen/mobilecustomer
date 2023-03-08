@@ -5,6 +5,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,7 +40,7 @@ public class MobileCustomerController {
 
     @PostMapping(value = "/customers", consumes = CustomerV1.MEDIA_TYPE_JSON)
     @ResponseStatus(code = HttpStatus.CREATED)
-    public ResponseEntity<Object> createCustomer(@RequestBody final CustomerV1 newCustomer) {
+    public ResponseEntity<Object> createCustomer(@Valid @RequestBody final CustomerV1 newCustomer) {
         Customer customer = CustomerV1.toCustomer(newCustomer);
 
         CustomerIdentifier customerId = mobileCustomerService.addCustomer(customer);
@@ -55,7 +57,7 @@ public class MobileCustomerController {
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public ResponseEntity<Object> updateCustomer(
             @PathVariable("id") final Integer customerId, 
-            @RequestBody final CustomerV1 existingCustomer) {
+            @Valid @RequestBody final CustomerV1 existingCustomer) {
 
         mobileCustomerService.updateCustomer(new CustomerIdentifier(customerId), CustomerV1.toCustomer(existingCustomer));
 
@@ -72,7 +74,7 @@ public class MobileCustomerController {
 
     @PostMapping(value = "/subscribers", consumes = MobileSubscriberV1.MEDIA_TYPE_JSON)
     @ResponseStatus(code = HttpStatus.CREATED)
-    public ResponseEntity<Object> addMobileSubscriber(@RequestBody final MobileSubscriberV1 newSubscriber) {
+    public ResponseEntity<Object> addMobileSubscriber(@Valid @RequestBody final MobileSubscriberV1 newSubscriber) {
         MobileSubscriber subscriber = MobileSubscriberV1.toMobileSubscriber(newSubscriber);
 
         MobileSubscriberIdentifier subscriberId = mobileCustomerService.addMobileSubscriber(subscriber);

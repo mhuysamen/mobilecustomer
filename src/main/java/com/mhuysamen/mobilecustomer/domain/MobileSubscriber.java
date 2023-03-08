@@ -3,13 +3,11 @@ package com.mhuysamen.mobilecustomer.domain;
 import java.time.Instant;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NonNull;
-import lombok.Setter;
 
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class MobileSubscriber {
 
     public enum ServiceType {

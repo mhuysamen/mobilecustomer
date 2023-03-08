@@ -1,5 +1,8 @@
 package com.mhuysamen.mobilecustomer.service.rest;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -7,13 +10,19 @@ import com.mhuysamen.mobilecustomer.domain.Customer;
 import com.mhuysamen.mobilecustomer.domain.CustomerIdentifier;
 import com.mhuysamen.mobilecustomer.domain.IDCard;
 
+import lombok.Data;
+
 @JsonNaming(SnakeCaseStrategy.class)
+@Data
 public class CustomerV1 {
-    public Integer id;
-    public String idCard;
-    public String name;
-    public String surname;
-    public String address;
+    private Integer id;
+    @NotEmpty(message = "id_card is required")
+    private String idCard;
+    @NotEmpty(message = "name must be provided")
+    private String name;
+    @NotNull(message = "surname field must be passed, even if empty")
+    private String surname;
+    private String address;
 
     @JsonIgnore
     final public static String MEDIA_TYPE_JSON = "application/vnd.mhuysamen.com.customer.v1+json";
