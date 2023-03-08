@@ -66,7 +66,8 @@ import org.springframework.security.web.util.matcher.RegexRequestMatcher;
          // @formatter:off
          http
                  .authorizeHttpRequests((authorize) -> authorize
-                         .anyRequest().authenticated()
+                        .antMatchers("/v3/**").permitAll()
+                        .anyRequest().authenticated()
                  )
                  .csrf((csrf) -> csrf.ignoringRequestMatchers(new RegexRequestMatcher(".*/token", "POST")))
                  .httpBasic(Customizer.withDefaults())
