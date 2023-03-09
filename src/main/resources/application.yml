@@ -9,3 +9,7 @@ logging:
 jwt:
   private.key: classpath:app.key
   public.key: classpath:app.pub
+
+spring:
+  flyway:
+    locations: "classpath:db/migration/{vendor}"

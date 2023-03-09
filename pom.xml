@@ -129,6 +129,10 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<docker>
+                        <host>unix:///run/user/1000/podman/podman.sock</host>
+                        <bindHostToBuilder>true</bindHostToBuilder>
+                    </docker>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -150,16 +154,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			  <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <docker>
-                        <host>unix:///run/user/1000/podman/podman.sock</host>
-                        <bindHostToBuilder>true</bindHostToBuilder>
-                    </docker>
-                </configuration>
-            </plugin>
 		</plugins>
 	</build>
 
