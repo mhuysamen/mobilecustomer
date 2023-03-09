@@ -18,6 +18,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import com.mhuysamen.mobilecustomer.core.CustomerAlreadyExistsException;
 import com.mhuysamen.mobilecustomer.core.CustomerNotFoundException;
 import com.mhuysamen.mobilecustomer.core.MobileCustomerServiceImpl;
+import com.mhuysamen.mobilecustomer.core.MobileSubscriberAlreadyExistsException;
+import com.mhuysamen.mobilecustomer.core.MobileSubscriberNotFoundException;
 import com.mhuysamen.mobilecustomer.domain.Customer;
 import com.mhuysamen.mobilecustomer.domain.CustomerIdentifier;
 import com.mhuysamen.mobilecustomer.domain.IDCard;
@@ -28,8 +30,6 @@ import com.mhuysamen.mobilecustomer.domain.PhoneNumber;
 import com.mhuysamen.mobilecustomer.domain.MobileSubscriber.ServiceType;
 import com.mhuysamen.mobilecustomer.ports.CustomerDataSource;
 import com.mhuysamen.mobilecustomer.ports.MobileSubscriberDataSource;
-
-import ch.qos.logback.core.util.Duration;
 
 @SpringBootTest
 public class CoreTests {
@@ -147,7 +147,7 @@ public class CoreTests {
     }
 
     @Test
-    void service_UpdateCustomer() {
+    void service_UpdateCustomerTest() {
         Customer shrek = customerShrek(1);
         assertThrows(CustomerNotFoundException.class, () -> {
             service.updateCustomer(shrek.getId(), shrek);
@@ -178,7 +178,7 @@ public class CoreTests {
     }
 
     @Test
-    void service_removeCustomer() {
+    void service_removeCustomerTest() {
         Customer shrek = customerShrek(1);
 
         Mockito.when(customerData.fetchCustomerByIdCard(shrek.getIdCard())).thenReturn(Optional.of(shrek));
@@ -195,7 +195,7 @@ public class CoreTests {
     }
 
     @Test
-    void service_listAllSubscribers() {
+    void service_listAllSubscribersTest() {
         List<MobileSubscriber> subscribers = allSubscribers();
 
         Mockito.when(subscriberData.fetchAllSubscribers()).thenReturn(subscribers);
@@ -206,11 +206,11 @@ public class CoreTests {
     }
 
     @Test
-    void service_listMatchingSubscribers() {
+    void service_listMatchingSubscribersTest() {
         List<MobileSubscriber> subscribers = allSubscribers();
 
         MobileSubscriber shrek = subscribers.get(0);
-        MobileSubscriber fiona = subscribers.get(1);
+        // MobileSubscriber fiona = subscribers.get(1);
 
         Mockito.when(subscriberData.fetchAllSubscribers()).thenReturn(subscribers);
         for (MobileSubscriber mobileSubscriber : subscribers) {
@@ -220,16 +220,137 @@ public class CoreTests {
                 .thenReturn(Optional.of(mobileSubscriber));                
         }
 
-        Mockito.when(subscriberData.findMatchingSubscribers(new MobileSubscriberSearchCriteria() {{
-            msisdn = shrek.getMsisdn();    
-        }})).thenReturn(subscribers.subList(0, 1));
-
         MobileSubscriberSearchCriteria criteria = new MobileSubscriberSearchCriteria();
         criteria.msisdn = shrek.getMsisdn();
 
+        Mockito.when(subscriberData.findMatchingSubscribers(criteria)).thenReturn(subscribers.subList(0, 1));
+
         List<MobileSubscriber> answer = service.listMatchingSubscribers(criteria);
 
-        // assertEquals(1, answer.size());
+        assertEquals(1, answer.size());
+    }
+
+    @Test
+    void service_addMobileSubscriberTest() {
+        MobileSubscriber shrek = subscriberShrek(null);
+        MobileSubscriber shrekData = subscriberShrek(1);
+
+        Mockito.when(subscriberData.fetchMobileSubscriberByPhoneNumber(shrekData.getMsisdn()))
+            .thenReturn(Optional.empty());
+        Mockito.when(subscriberData.createSubscriber(shrek))
+            .thenReturn(shrekData);
+
+        MobileSubscriberIdentifier shrekId = service.addMobileSubscriber(shrek);
+
+        assertNotNull(shrekId);
+        assertEquals(shrekData.getId(), shrekId);
+
+        Mockito.when(subscriberData.fetchMobileSubscriberByPhoneNumber(shrekData.getMsisdn()))
+            .thenReturn(Optional.of(shrekData));
+        Mockito.when(subscriberData.fetchMobileSubscriberById(shrekData.getId()))
+            .thenReturn(Optional.of(shrekData));
+
+        assertThrows(MobileSubscriberAlreadyExistsException.class, () -> {
+            service.addMobileSubscriber(shrek);
+        });
+    }
+
+    @Test
+    void service_removeMobileSubscriberTest() {
+        MobileSubscriber shrekData = subscriberShrek(1);
+
+        Mockito.when(subscriberData.fetchMobileSubscriberById(shrekData.getId()))
+            .thenReturn(Optional.of(shrekData));
+
+        service.removeMobileSubscriber(shrekData.getId());
+
+        Mockito.when(subscriberData.fetchMobileSubscriberById(shrekData.getId()))
+            .thenReturn(Optional.empty());
+
+        assertThrows(MobileSubscriberNotFoundException.class, () -> {
+            service.removeMobileSubscriber(shrekData.getId());
+        });
+
+    }
+
+    @Test
+    void service_changeMobileSubscriberServicePlanTest() {
+        MobileSubscriber shrekData = subscriberShrek(1);
+
+        Mockito.when(subscriberData.fetchMobileSubscriberById(shrekData.getId()))
+            .thenReturn(Optional.of(shrekData));
+
+        service.changeMobileSubscriptionPlan(shrekData.getId(), ServiceType.MOBILE_POSTPAID);
+
+        Mockito.when(subscriberData.fetchMobileSubscriberById(shrekData.getId()))
+            .thenReturn(Optional.empty());
+
+        assertThrows(MobileSubscriberNotFoundException.class, () -> {
+            service.changeMobileSubscriptionPlan(shrekData.getId(), ServiceType.MOBILE_POSTPAID);
+        });
+
+    }
+
+    @Test
+    void service_updateMobileSubscriberOwnerTest() {
+        MobileSubscriber shrekSubscription = subscriberShrek(1);
+        Customer shrek = customerShrek(1);
+
+        // Happy path
+        Mockito.when(subscriberData.fetchMobileSubscriberById(shrekSubscription.getId()))
+            .thenReturn(Optional.of(shrekSubscription));
+        Mockito.when(customerData.fetchCustomerById(shrek.getId()))
+            .thenReturn(Optional.of(shrek));
+
+        service.updateMobileSubscriptionOwner(shrekSubscription.getId(), shrek.getId());
+
+        Mockito.when(subscriberData.fetchMobileSubscriberById(shrekSubscription.getId()))
+            .thenReturn(Optional.empty());
+
+        assertThrows(MobileSubscriberNotFoundException.class, () -> {
+            service.updateMobileSubscriptionOwner(shrekSubscription.getId(), shrek.getId());
+        });
+
+        Mockito.when(subscriberData.fetchMobileSubscriberById(shrekSubscription.getId()))
+            .thenReturn(Optional.of(shrekSubscription));
+        Mockito.when(customerData.fetchCustomerById(shrek.getId()))
+            .thenReturn(Optional.empty());
+
+        assertThrows(CustomerNotFoundException.class, () -> {
+            service.updateMobileSubscriptionOwner(shrekSubscription.getId(), shrek.getId());
+        });
+    
+    }
+
+    @Test
+    void service_updateMobileSubscriberUserTest() {
+        MobileSubscriber shrekSubscription = subscriberShrek(1);
+        Customer shrek = customerShrek(1);
+
+        // Happy path
+        Mockito.when(subscriberData.fetchMobileSubscriberById(shrekSubscription.getId()))
+            .thenReturn(Optional.of(shrekSubscription));
+        Mockito.when(customerData.fetchCustomerById(shrek.getId()))
+            .thenReturn(Optional.of(shrek));
+
+        service.updateMobileSubscriptionUser(shrekSubscription.getId(), shrek.getId());
+
+        Mockito.when(subscriberData.fetchMobileSubscriberById(shrekSubscription.getId()))
+            .thenReturn(Optional.empty());
+
+        assertThrows(MobileSubscriberNotFoundException.class, () -> {
+            service.updateMobileSubscriptionUser(shrekSubscription.getId(), shrek.getId());
+        });
+
+        Mockito.when(subscriberData.fetchMobileSubscriberById(shrekSubscription.getId()))
+            .thenReturn(Optional.of(shrekSubscription));
+        Mockito.when(customerData.fetchCustomerById(shrek.getId()))
+            .thenReturn(Optional.empty());
+
+        assertThrows(CustomerNotFoundException.class, () -> {
+            service.updateMobileSubscriptionUser(shrekSubscription.getId(), shrek.getId());
+        });
+    
     }
 
 }

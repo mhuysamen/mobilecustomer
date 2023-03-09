@@ -7,6 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode
 @Entity(name = "mobilesubscriber")
 public class MobileSubscriberEntity {
     @Id

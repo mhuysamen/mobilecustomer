@@ -143,4 +143,9 @@ public class MobileSubscriberDataSourceImpl implements MobileSubscriberDataSourc
     public void removeMobileSubscriber(MobileSubscriberIdentifier mobileSubscriberId) {
         repository.deleteById(mobileSubscriberId.getValue());        
     }
+
+    @Override
+    public Integer countMobileSubcribersByOwnedOrUsedByCustomer(CustomerIdentifier customerId) {
+        return repository.countByCustomerIdOwnerOrCustomerIdUser(customerId.getValue(), customerId.getValue());
+    }
 }

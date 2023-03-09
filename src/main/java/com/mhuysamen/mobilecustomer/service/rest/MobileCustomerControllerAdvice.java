@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.persistence.PersistenceException;
+
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import com.mhuysamen.mobilecustomer.core.CustomerAlreadyExistsException;
+import com.mhuysamen.mobilecustomer.core.CustomerHasServicesException;
 import com.mhuysamen.mobilecustomer.core.CustomerNotFoundException;
 import com.mhuysamen.mobilecustomer.core.MobileSubscriberAlreadyExistsException;
 import com.mhuysamen.mobilecustomer.core.MobileSubscriberNotFoundException;
@@ -89,9 +92,18 @@ public class MobileCustomerControllerAdvice {
     }
 
     @ExceptionHandler(value = {
+        CustomerHasServicesException.class
+    })
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    public ErrorMessageV1 serviceValidationErrors(Exception ex, WebRequest request) {
+        return createErrorMessageV1(HttpStatus.CONFLICT, ex);
+    }
+
+    @ExceptionHandler(value = {
         NumberFormatException.class,
         IllegalAccessException.class,
-        NullPointerException.class
+        NullPointerException.class,
+        PersistenceException.class
     })
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMessageV1 serviceInternalError(Exception ex, WebRequest request) {

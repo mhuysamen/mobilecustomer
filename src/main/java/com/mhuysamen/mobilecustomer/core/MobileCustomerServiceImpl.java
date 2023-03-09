@@ -79,6 +79,11 @@ public class MobileCustomerServiceImpl implements MobileCustomerService {
             throw new CustomerNotFoundException(customerId);
         }
 
+        // Check for the existence of Subscriptions owned or used by Customer.
+        if(mobileSubscriberData.countMobileSubcribersByOwnedOrUsedByCustomer(customerId) > 0) {
+            throw new CustomerHasServicesException(customerId);
+        }
+        
         customerData.removeCustomer(customerId);
     }
 
@@ -101,7 +106,7 @@ public class MobileCustomerServiceImpl implements MobileCustomerService {
 
         Optional<Customer> oDuplicate = customerData.fetchCustomerByIdCard(newDetails.getIdCard());
 
-        if(oDuplicate.isPresent() && oDuplicate.get().getId() != customerId) {
+        if(oDuplicate.isPresent() && !oDuplicate.get().getId().equals(customerId)) {
             throw new CustomerAlreadyExistsException(newDetails);
         }
 
