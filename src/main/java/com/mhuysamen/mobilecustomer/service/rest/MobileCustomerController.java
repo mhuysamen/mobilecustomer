@@ -100,11 +100,11 @@ public class MobileCustomerController {
     @ResponseStatus(code = HttpStatus.OK)
     public ResponseEntity<Object> changeMobileSubscriberServiceType(
             @PathVariable final Integer id,
-            @RequestBody final MultiValueMap<String, String> formData) {
+            @RequestBody @Valid final ChangeMobileSubscriberServiceTypeV1 changes) {
 
         MobileSubscriberIdentifier subscriberId = new MobileSubscriberIdentifier(id);
 
-        ServiceType serviceType = FormUtil.getFormEnum(formData, "service_type", ServiceType.class);
+        ServiceType serviceType = changes.serviceType;
 
         mobileCustomerService.changeMobileSubscriptionPlan(subscriberId, serviceType);
 
@@ -115,12 +115,11 @@ public class MobileCustomerController {
     @ResponseStatus(code = HttpStatus.OK)
     public ResponseEntity<Object> changeMobileSubscriberOwner(
             @PathVariable final Integer id,
-            @RequestBody final MultiValueMap<String, String> formData) {
+            @RequestBody @Valid final ChangeMobileSubscriberOwnerV1 changes) {
 
         MobileSubscriberIdentifier subscriberId = new MobileSubscriberIdentifier(id);
 
-        CustomerIdentifier newOwner = new CustomerIdentifier(
-            FormUtil.getFormInteger(formData, "customer_id"));
+        CustomerIdentifier newOwner = new CustomerIdentifier(changes.owner);
 
         mobileCustomerService.updateMobileSubscriptionOwner(subscriberId, newOwner);
 
@@ -131,12 +130,11 @@ public class MobileCustomerController {
     @ResponseStatus(code = HttpStatus.OK)
     public ResponseEntity<Object> changeMobileSubscriberUser(
             @PathVariable final Integer id,
-            @RequestBody final MultiValueMap<String, String> formData) {
+            @RequestBody @Valid final ChangeMobileSubscriberUserV1 changes) {
 
         MobileSubscriberIdentifier subscriberId = new MobileSubscriberIdentifier(id);
 
-        CustomerIdentifier newUser = new CustomerIdentifier(
-            FormUtil.getFormInteger(formData, "customer_id"));
+        CustomerIdentifier newUser = new CustomerIdentifier(changes.user);
 
         mobileCustomerService.updateMobileSubscriptionUser(subscriberId, newUser);
 
