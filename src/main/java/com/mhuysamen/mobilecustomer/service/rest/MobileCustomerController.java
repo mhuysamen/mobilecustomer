@@ -61,7 +61,7 @@ public class MobileCustomerController {
         return CustomerV1.fromCustomer(customer);
     }
 
-    @PutMapping(value = "/customers/{id}")
+    @PutMapping(value = "/customers/{id}", consumes = CustomerV1.MEDIA_TYPE_JSON)
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public ResponseEntity<Object> updateCustomer(
             @PathVariable("id") final Integer customerId, 
@@ -148,7 +148,7 @@ public class MobileCustomerController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(value = "/subscribers", produces = MobileSubscriberV1.MEDIA_TYPE_JSON)
+    @GetMapping(value = "/subscribers")
     public List<MobileSubscriberV1> listMobileSubscribers(
             @RequestParam(name = "msisdn", required = false) String msisdn,
             @RequestParam(name = "owner", required = false) Integer owner,
