@@ -6,7 +6,9 @@ This RESTful Web Service keeps track of Customers, and their Mobile Subscription
 ## Explanation
 This is a generic demonstration system developed in Spring Boot, which exposes a simple API for managing Customers and their Mobile Subscriptions in a Database.
 
+<!--
 ```plantuml
+@startuml overview
 !include <c4/C4_Container.puml>
 
 Person(user, "User", "User of the system")
@@ -18,7 +20,10 @@ System_Boundary(mobilecustomer_system, "Mobile Customer") {
 }
 
 Rel(user, mobilecustomer, "uses", "HTTP")
+@enduml
 ```
+-->
+![](overview.svg)
 
 ## How to use
 
@@ -56,7 +61,9 @@ This file can be uploaded to a service like https://redocly.github.io/redoc/ to 
 
 This application consists of the following components which handle the logic in the application.
 
+<!--
 ```plantuml
+@startuml details
 !include <c4/C4_Component.puml>
 
 Person(user, "User", "User of the system")
@@ -78,6 +85,8 @@ Rel(subscriberrepo, database, "JDBC/SQL")
 
 Rel(user, tokencontrol, "Authenticate")
 Rel(user, mobilecustomer, "Interact via API")
-
+@enduml
 ```
+-->
 
+![](details.svg)
