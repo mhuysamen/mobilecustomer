@@ -3,7 +3,7 @@ services:
   mobilecustomer:
     depends_on:
       - db
-    image: docker.io/library/mobilecustomer:0.0.1-SNAPSHOT
+    image: docker.io/mhuysamen/mobilecustomer:0.0.1
     ports:
       - "8080:8080"
     environment:
