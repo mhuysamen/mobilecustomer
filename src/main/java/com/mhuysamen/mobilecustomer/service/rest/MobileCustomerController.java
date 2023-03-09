@@ -151,22 +151,21 @@ public class MobileCustomerController {
             @RequestParam(name = "start_date_before", required = false) Instant startDateBefore,
             @RequestParam(name = "start_date_after", required = false) Instant startDateAfter) {
 
-        boolean allnull = true;
-
         MobileSubscriberSearchCriteria criteria = new MobileSubscriberSearchCriteria();
-        if((criteria.msisdn = msisdn != null ? new PhoneNumber(msisdn) : null) != null) allnull = false;
-        if((criteria.owner = owner != null ? new CustomerIdentifier(owner) : null) != null) allnull = false;
-        if((criteria.user = user != null ? new CustomerIdentifier(user) : null) != null) allnull = false;
-        if((criteria.serviceType = serviceType) != null) allnull = false;
-        if((criteria.serviceStartDateAfter = startDateAfter) != null) allnull = false;
-        if((criteria.serviceStartDateBefore = startDateBefore) != null) allnull = false;
+        criteria.setMsisdn((msisdn != null ? new PhoneNumber(msisdn) : null));
+        criteria.setOwner((owner != null ? new CustomerIdentifier(owner) : null));
+        criteria.setUser((user != null ? new CustomerIdentifier(user) : null));
+        criteria.setServiceType(serviceType);
+        criteria.setServiceStartDateAfter(startDateAfter);
+        criteria.setServiceStartDateBefore(startDateBefore);
 
-        if(allnull) {
+        if(criteria.hasCriteria()) {
             return mobileCustomerService.listMatchingSubscribers(criteria)
                 .stream().map(MobileSubscriberV1::fromMobileSubscriber).collect(Collectors.toList());
         }
         else {
-            return mobileCustomerService.listAllMobileSubscribers().stream().map(MobileSubscriberV1::fromMobileSubscriber).collect(Collectors.toList());
+            return mobileCustomerService.listAllMobileSubscribers()
+                .stream().map(MobileSubscriberV1::fromMobileSubscriber).collect(Collectors.toList());
         }
     }
 

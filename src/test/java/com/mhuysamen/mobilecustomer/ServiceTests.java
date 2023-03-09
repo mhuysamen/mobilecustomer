@@ -29,6 +29,7 @@ import com.mhuysamen.mobilecustomer.service.data.CustomerRepository;
 import com.mhuysamen.mobilecustomer.service.data.MobileSubscriberEntity;
 import com.mhuysamen.mobilecustomer.service.data.MobileSubscriberRepository;
 import com.mhuysamen.mobilecustomer.service.rest.CustomerV1;
+import com.mhuysamen.mobilecustomer.service.rest.MobileSubscriberV1;
 
 @SpringBootTest
 public class ServiceTests {
@@ -233,5 +234,54 @@ public class ServiceTests {
         MobileSubscriberIdentifier subscriberId = new MobileSubscriberIdentifier(subscriberEntity.id);
 
         service.changeMobileSubscriptionPlan(subscriberId, ServiceType.MOBILE_POSTPAID);
+    }
+
+    @Test
+    void service_updateMobileSubscriberOwnerTest() {
+        MobileSubscriberEntity subscriberEntity = allSubscribers().get(3);
+        MobileSubscriberIdentifier subscriberId = new MobileSubscriberIdentifier(subscriberEntity.id);
+
+        service.updateMobileSubscriptionOwner(subscriberId, new CustomerIdentifier(1));
+    }
+
+    @Test
+    void service_updateMobileSubscriberUserTest() {
+        MobileSubscriberEntity subscriberEntity = allSubscribers().get(3);
+        MobileSubscriberIdentifier subscriberId = new MobileSubscriberIdentifier(subscriberEntity.id);
+
+        service.updateMobileSubscriptionUser(subscriberId, new CustomerIdentifier(1));
+    }
+
+    @Test
+    void service_addMobileSubscription() {
+        MobileSubscriberEntity entity = new MobileSubscriberEntity();
+        entity.msisdn = "35699555555";
+        entity.serviceType = ServiceType.MOBILE_POSTPAID.name();
+        entity.customerIdOwner = 3;
+        entity.customerIdUser = 3;
+
+        MobileSubscriberV1 subscriberV1 = new MobileSubscriberV1();
+        subscriberV1.setMsisdn(entity.msisdn);
+        subscriberV1.setServiceType(ServiceType.valueOf(entity.serviceType));
+        subscriberV1.setOwner(entity.customerIdOwner);
+        subscriberV1.setUser(entity.customerIdUser);
+
+        MobileSubscriber subscriber = MobileSubscriberV1.toMobileSubscriber(subscriberV1);
+
+        entity.serviceStartDate = Timestamp.from(subscriber.getServiceStartDate());
+
+        MobileSubscriberEntity entityStored = new MobileSubscriberEntity();
+        entityStored.id = 5;
+        entityStored.msisdn = entity.msisdn;
+        entityStored.serviceStartDate = entity.serviceStartDate;
+        entityStored.serviceType = entity.serviceType;
+        entityStored.customerIdOwner = entity.customerIdOwner;
+        entityStored.customerIdUser = entity.customerIdUser;
+
+        Mockito.when(subscriberRepository.save(entity)).thenReturn(entityStored);
+
+        MobileSubscriberIdentifier subscriberId = service.addMobileSubscriber(subscriber);
+
+        assertEquals(entityStored.id, subscriberId.getValue());
     }
 }

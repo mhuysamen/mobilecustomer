@@ -3,6 +3,7 @@ package com.mhuysamen.mobilecustomer.service.rest;
 import java.time.Instant;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
@@ -21,13 +22,13 @@ public class MobileSubscriberV1 {
     private Integer id;
     @NotEmpty(message = "phone number is required")
     private String msisdn;
-    @NotEmpty(message = "owner identifier must be provided")
+    @NotNull(message = "owner identifier must be provided")
     private Integer owner;
-    @NotEmpty(message = "user identifier must be provided")
+    @NotNull(message = "user identifier must be provided")
     private Integer user;
-    @NotEmpty(message = "service_type must be specified")
+    @NotNull(message = "service_type must be specified")
     private ServiceType serviceType;
-    @NotEmpty(message = "service_start_date must be specified")
+    // @NotEmpty(message = "service_start_date must be specified")
     private Instant serviceStartDate = Instant.now();
 
     @JsonIgnore

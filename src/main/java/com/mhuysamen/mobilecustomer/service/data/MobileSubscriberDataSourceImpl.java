@@ -1,5 +1,6 @@
 package com.mhuysamen.mobilecustomer.service.data;
 
+import java.lang.reflect.Array;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,29 +97,31 @@ public class MobileSubscriberDataSourceImpl implements MobileSubscriberDataSourc
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<MobileSubscriberEntity> cq = cb.createQuery(MobileSubscriberEntity.class);
 
-        List<Predicate> predicates = new ArrayList<Predicate>();
+        // List<Predicate> predicates = new ArrayList<Predicate>();
+
+        Predicate predicate = cb.conjunction();
 
         Root<MobileSubscriberEntity> subscriber = cq.from(MobileSubscriberEntity.class);
-        if(sc.msisdn != null) {
-            predicates.add(cb.equal(subscriber.get("msisdn"), sc.msisdn.getValue()));
+        if(sc.getMsisdn() != null) {
+            predicate = cb.and(predicate,cb.equal(subscriber.get("msisdn"), sc.getMsisdn().getValue()));
         }
-        if(sc.serviceType != null) {
-            predicates.add(cb.equal(subscriber.get("serviceType"), sc.serviceType.name()));
+        if(sc.getServiceType() != null) {
+            predicate = cb.and(predicate,cb.equal(subscriber.get("serviceType"), sc.getServiceType().name()));
         }
-        if(sc.owner != null) {
-            predicates.add(cb.equal(subscriber.get("customerIdOwner"), sc.owner.getValue()));
+        if(sc.getOwner() != null) {
+            predicate = cb.and(predicate,cb.equal(subscriber.get("customerIdOwner"), sc.getOwner().getValue()));
         }
-        if(sc.user != null) {
-            predicates.add(cb.equal(subscriber.get("customerIdUser"), sc.user.getValue()));
+        if(sc.getUser() != null) {
+            predicate = cb.and(predicate,cb.equal(subscriber.get("customerIdUser"), sc.getUser().getValue()));
         }
-        if(sc.serviceStartDateAfter != null) {
-            predicates.add(cb.greaterThanOrEqualTo(subscriber.get("serviceStartDate"), Timestamp.from(sc.serviceStartDateAfter)));
+        if(sc.getServiceStartDateAfter() != null) {
+            predicate = cb.and(predicate,cb.greaterThanOrEqualTo(subscriber.get("serviceStartDate"), Timestamp.from(sc.getServiceStartDateAfter())));
         }
-        if(sc.serviceStartDateBefore != null) {
-            predicates.add(cb.lessThanOrEqualTo(subscriber.get("serviceStartDate"), Timestamp.from(sc.serviceStartDateBefore)));
+        if(sc.getServiceStartDateBefore() != null) {
+            predicate = cb.and(predicate,cb.lessThanOrEqualTo(subscriber.get("serviceStartDate"), Timestamp.from(sc.getServiceStartDateBefore())));
         }
 
-        cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        cq.where(predicate);
 
         List<MobileSubscriber> subscribers = new ArrayList<>();
 

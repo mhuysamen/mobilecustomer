@@ -221,7 +221,7 @@ public class CoreTests {
         }
 
         MobileSubscriberSearchCriteria criteria = new MobileSubscriberSearchCriteria();
-        criteria.msisdn = shrek.getMsisdn();
+        criteria.setMsisdn(shrek.getMsisdn());
 
         Mockito.when(subscriberData.findMatchingSubscribers(criteria)).thenReturn(subscribers.subList(0, 1));
 
