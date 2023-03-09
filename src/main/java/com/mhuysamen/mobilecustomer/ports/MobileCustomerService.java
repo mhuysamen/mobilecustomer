@@ -15,6 +15,7 @@ public interface MobileCustomerService {
 
     MobileSubscriberIdentifier addMobileSubscriber(MobileSubscriber subscriber);
     CustomerIdentifier addCustomer(Customer customer);
+    Customer getCustomer(CustomerIdentifier customerId);
     void changeMobileSubscriptionPlan(MobileSubscriberIdentifier subscriber, ServiceType serviceType);
     void updateCustomer(CustomerIdentifier customerId, Customer newDetails);
     void removeMobileSubscriber(MobileSubscriberIdentifier subscriberId);

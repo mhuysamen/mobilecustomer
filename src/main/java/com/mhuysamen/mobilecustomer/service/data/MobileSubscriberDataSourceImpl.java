@@ -1,6 +1,5 @@
 package com.mhuysamen.mobilecustomer.service.data;
 
-import java.lang.reflect.Array;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;

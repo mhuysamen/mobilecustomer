@@ -26,6 +26,11 @@ public class MobileCustomerService extends MobileCustomerServiceImpl {
     }
 
     @Override
+    public Customer getCustomer(CustomerIdentifier customerId) {
+        return super.getCustomer(customerId);
+    }
+
+    @Override
     @Transactional
     public MobileSubscriberIdentifier addMobileSubscriber(MobileSubscriber subscriber) {
         return super.addMobileSubscriber(subscriber);

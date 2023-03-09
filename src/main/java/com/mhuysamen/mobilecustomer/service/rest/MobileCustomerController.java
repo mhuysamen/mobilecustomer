@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -51,6 +52,14 @@ public class MobileCustomerController {
             .toUri();
 
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping(value = "/customers/{id}", produces = CustomerV1.MEDIA_TYPE_JSON)
+    @ResponseBody
+    public CustomerV1 getCustomer(
+            @PathVariable("id") final Integer customerId) {
+        Customer customer = mobileCustomerService.getCustomer(new CustomerIdentifier(customerId));
+        return CustomerV1.fromCustomer(customer);
     }
 
     @PutMapping(value = "/customers/{id}")

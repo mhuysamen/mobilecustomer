@@ -36,6 +36,17 @@ public class MobileCustomerServiceImpl implements MobileCustomerService {
     }
 
     @Override
+    public Customer getCustomer(CustomerIdentifier customerId) {
+        Optional<Customer> existingCustomer = customerData.fetchCustomerById(customerId);
+
+        if(!existingCustomer.isPresent()) {
+            throw new CustomerNotFoundException(customerId);
+        }
+        
+        return existingCustomer.get();
+    }
+
+    @Override
     public MobileSubscriberIdentifier addMobileSubscriber(MobileSubscriber subscriber) {
         Optional<MobileSubscriber> existingMobileSubscription = mobileSubscriberData.fetchMobileSubscriberByPhoneNumber(subscriber.getMsisdn());
 
@@ -83,7 +94,7 @@ public class MobileCustomerServiceImpl implements MobileCustomerService {
         if(mobileSubscriberData.countMobileSubcribersByOwnedOrUsedByCustomer(customerId) > 0) {
             throw new CustomerHasServicesException(customerId);
         }
-        
+
         customerData.removeCustomer(customerId);
     }
 
